@@ -1,0 +1,5 @@
+{
+  "name": "CCTV Prompt Generator",
+  "description": "Generate realistic, surveillance-style video prompts for CCTV footage using AI. Describe scenes as if they were recorded by security cameras in various environments.",
+  "requestFramePermissions": []
+}
