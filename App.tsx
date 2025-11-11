@@ -1,5 +1,13 @@
-// Fix: Add reference to Vite client types to resolve import.meta.env errors.
-/// <reference types="vite/client" />
+// Fix: Manually declare Vite's `import.meta.env` to resolve TypeScript errors.
+declare global {
+  interface ImportMeta {
+    readonly env: {
+      readonly VITE_API_KEY: string;
+      readonly VITE_SUPABASE_URL: string;
+      readonly VITE_SUPABASE_ANON_KEY: string;
+    }
+  }
+}
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Header } from './components/Header';
@@ -177,7 +185,7 @@ const ConfigurationError = ({ missingKeys }: { missingKeys: string[] }) => (
               3. Add the missing keys listed above with their corresponding values.
             </p>
             <ul className="mt-2 text-slate-400 text-xs space-y-1 pl-4">
-                <li><code className="text-slate-300">API_KEY</code>: Your Google Gemini API Key.</li>
+                <li><code className="text-slate-300">VITE_API_KEY</code>: Your Google Gemini API Key.</li>
                 <li><code className="text-slate-300">VITE_SUPABASE_URL</code>: Your Supabase project URL.</li>
                 <li><code className="text-slate-300">VITE_SUPABASE_ANON_KEY</code>: Your Supabase project anon key.</li>
             </ul>
@@ -269,7 +277,7 @@ const App: React.FC = () => {
   const { user } = useAuth();
   
   const missingEnvKeys = [
-    !process.env.API_KEY && 'API_KEY',
+    !import.meta.env.VITE_API_KEY && 'VITE_API_KEY',
     !import.meta.env.VITE_SUPABASE_URL && 'VITE_SUPABASE_URL',
     !import.meta.env.VITE_SUPABASE_ANON_KEY && 'VITE_SUPABASE_ANON_KEY',
   ].filter(Boolean) as string[];
