@@ -1,5 +1,13 @@
-// Fix: Add reference to Vite client types to resolve import.meta.env errors.
-/// <reference types="vite/client" />
+// Fix: Manually declare Vite's `import.meta.env` to resolve TypeScript errors.
+declare global {
+  interface ImportMeta {
+    readonly env: {
+      readonly VITE_API_KEY: string;
+      readonly VITE_SUPABASE_URL: string;
+      readonly VITE_SUPABASE_ANON_KEY: string;
+    }
+  }
+}
 
 import { createClient } from '@supabase/supabase-js';
 
