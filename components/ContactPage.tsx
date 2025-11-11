@@ -20,7 +20,7 @@ export const ContactPage: React.FC<PageProps> = ({ onBack }) => {
         </p>
         <p>
           <a 
-            href="https://github.com/google/prompt-gallery" 
+            href="https://github.com/Tototoyo" 
             target="_blank" 
             rel="noopener noreferrer" 
             className="text-green-400 underline hover:text-green-300 transition-colors"
