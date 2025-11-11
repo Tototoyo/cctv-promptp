@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient';
+import { supabase, supabasePublicClient } from './supabaseClient';
 import type { GeneratorOptions, SavedPrompt } from '../types';
 
 /**
@@ -25,7 +25,7 @@ export const addPrompt = async (prompt: string, options: GeneratorOptions, userI
  * @returns A promise that resolves to an array of saved prompts.
  */
 export const getRecentPrompts = async (): Promise<SavedPrompt[]> => {
-  const { data, error } = await supabase
+  const { data, error } = await supabasePublicClient
     .from('prompts')
     .select('*')
     .order('created_at', { ascending: false })
@@ -49,7 +49,7 @@ export const getAllPrompts = async (page: number, limit: number): Promise<{ prom
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit - 1;
 
-    const { data, error, count } = await supabase
+    const { data, error, count } = await supabasePublicClient
         .from('prompts')
         .select('*', { count: 'exact' })
         .order('created_at', { ascending: false })
