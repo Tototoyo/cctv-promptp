@@ -21,4 +21,9 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error("Supabase URL and Anon Key must be provided in environment variables.");
 }
 
+// The standard client for auth and user-specific operations
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// A dedicated client for public, read-only gallery operations.
+// This ensures that viewing the gallery is completely independent of the user's authentication state.
+export const supabasePublicClient = createClient(supabaseUrl, supabaseAnonKey);
