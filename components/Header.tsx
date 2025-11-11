@@ -106,7 +106,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
             </div>
 
             <a
-              href="https://github.com/google/prompt-gallery"
+              href="https://github.com/Tototoyo/"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="View source on GitHub"
