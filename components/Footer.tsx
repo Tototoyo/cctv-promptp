@@ -1,8 +1,10 @@
 
 import React from 'react';
 
+type Page = 'generator' | 'about' | 'contact' | 'terms' | 'privacy' | 'auth' | 'dashboard';
+
 interface FooterProps {
-  onNavigate: (page: 'generator' | 'about' | 'contact' | 'terms' | 'privacy') => void;
+  onNavigate: (page: Page) => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {

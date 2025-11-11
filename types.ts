@@ -11,4 +11,5 @@ export interface SavedPrompt {
   created_at: string;
   prompt: string;
   options: GeneratorOptions;
+  user_id?: string;
 }

@@ -1,3 +1,5 @@
+// Fix: Add reference to Vite client types to resolve import.meta.env errors.
+/// <reference types="vite/client" />
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Header } from './components/Header';
@@ -14,6 +16,10 @@ import { TermsPage } from './components/TermsPage';
 import { AdBanner } from './components/AdBanner';
 import { CookieConsent } from './components/CookieConsent';
 import { PrivacyPolicyPage } from './components/PrivacyPolicyPage';
+import { useAuth } from './contexts/AuthContext';
+import { AuthPage } from './components/AuthPage';
+import { DashboardPage } from './components/DashboardPage';
+import { GalleryPage } from './components/GalleryPage';
 
 type SectionTitleProps = {
   children: React.ReactNode;
@@ -118,32 +124,70 @@ const UseCasesSection = () => (
   </section>
 );
 
+const AiPlatformCard = ({ name }: { name: string }) => (
+  <div className="border border-green-900/80 bg-gray-900 p-6 rounded-sm flex items-center justify-center text-center transition-all duration-300 hover:border-green-700/80 hover:bg-gray-800/50">
+    <p className="text-slate-300 font-semibold tracking-wider">{name}</p>
+  </div>
+);
+
+const WhereToUseSection = () => (
+  <section id="where-to-use">
+    <SectionTitle>Where to Use These Prompts</SectionTitle>
+    <p className="text-center text-slate-400 max-w-3xl mx-auto -mt-12 mb-12">
+      Our CCTV prompts are crafted for compatibility with leading AI video and image generation platforms, enabling you to create stunning visuals with ease.
+    </p>
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-5xl mx-auto">
+      <AiPlatformCard name="OpenAI Sora" />
+      <AiPlatformCard name="Runway" />
+      <AiPlatformCard name="Pika" />
+      <AiPlatformCard name="Midjourney" />
+      <AiPlatformCard name="Stable Diffusion" />
+      <AiPlatformCard name="Veo" />
+      <AiPlatformCard name="Hailo" />
+      <AiPlatformCard name="Kling" />
+    </div>
+  </section>
+);
+
+
 const ConfigurationError = ({ missingKeys }: { missingKeys: string[] }) => (
   <div className="min-h-screen bg-gray-950 text-slate-300 font-mono flex flex-col items-center justify-center p-4">
-    <div className="w-full max-w-2xl bg-gray-900/50 border border-red-500/30 rounded-sm p-8 text-center">
+    <div className="w-full max-w-3xl bg-gray-900/50 border border-red-500/30 rounded-sm p-8 text-center">
       <div className="flex justify-center items-center h-16 w-16 rounded-full bg-red-900/50 mx-auto mb-4 border border-red-500/30 text-red-400">
         <TerminalIcon className="w-8 h-8" />
       </div>
       <h1 className="text-2xl font-bold text-red-400">Configuration Error</h1>
       <p className="mt-4 text-slate-300">
-        The following required environment variables are missing. This application cannot function without them.
+        The application is missing one or more required environment variables. Please configure them to proceed.
       </p>
-      <div className="mt-6 text-left bg-black/40 p-4 rounded-sm border border-slate-700/50 text-sm">
-        <p className="font-bold text-slate-200">Missing Keys:</p>
-        <ul className="mt-2 space-y-2 list-disc list-inside text-red-400">
-          {missingKeys.map(key => <li key={key}><code className="bg-slate-700 text-red-400 px-1.5 py-0.5 rounded-sm">{key}</code></li>)}
+      <div className="mt-6 text-left bg-black/40 p-6 rounded-sm border border-slate-700/50 text-sm">
+        <p className="font-bold text-slate-200 text-base mb-4">Missing Environment Variables:</p>
+        <ul className="space-y-3 list-disc list-inside text-red-400">
+          {missingKeys.map(key => <li key={key}><code className="bg-slate-700 text-red-400 px-1.5 py-0.5 rounded-sm font-bold">{key}</code></li>)}
         </ul>
-        <p className="mt-4 font-bold text-slate-200">How to fix this (for Vercel):</p>
-        {/* Fix: Updated instructions to remove VITE_ prefix hint, aligning with process.env usage. */}
-        <p className="mt-2 text-slate-400">
-          Go to your project settings in Vercel, navigate to the "Environment Variables" section, and add the missing keys with their corresponding values. Make sure they are available in the production environment.
-        </p>
+        <div className="mt-6 pt-4 border-t border-slate-700">
+            <h3 className="font-bold text-slate-200 text-base">How to Fix (for Vercel Deployment):</h3>
+            <p className="mt-2 text-slate-400">
+              1. Go to your project settings in Vercel.
+            </p>
+            <p className="mt-1 text-slate-400">
+              2. Navigate to the "Environment Variables" section.
+            </p>
+            <p className="mt-1 text-slate-400">
+              3. Add the missing keys listed above with their corresponding values.
+            </p>
+            <ul className="mt-2 text-slate-400 text-xs space-y-1 pl-4">
+                <li><code className="text-slate-300">API_KEY</code>: Your Google Gemini API Key.</li>
+                <li><code className="text-slate-300">VITE_SUPABASE_URL</code>: Your Supabase project URL.</li>
+                <li><code className="text-slate-300">VITE_SUPABASE_ANON_KEY</code>: Your Supabase project anon key.</li>
+            </ul>
+        </div>
       </div>
     </div>
   </div>
 );
 
-const GalleryPromptCard: React.FC<{ prompt: SavedPrompt }> = ({ prompt }) => {
+export const GalleryPromptCard: React.FC<{ prompt: SavedPrompt }> = ({ prompt }) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -167,9 +211,9 @@ const GalleryPromptCard: React.FC<{ prompt: SavedPrompt }> = ({ prompt }) => {
   );
 };
 
-const GallerySkeleton: React.FC = () => (
+const GallerySkeleton: React.FC<{ count?: number }> = ({ count = 8 }) => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {Array.from({ length: 8 }).map((_, i) => (
+        {Array.from({ length: count }).map((_, i) => (
             <div key={i} className="bg-gray-900/50 border border-green-400/10 rounded-sm p-4 h-[180px] animate-pulse">
                 <div className="h-3 bg-gray-700/50 rounded w-5/6 mb-2"></div>
                 <div className="h-3 bg-gray-700/50 rounded w-full mb-2"></div>
@@ -180,7 +224,7 @@ const GallerySkeleton: React.FC = () => (
     </div>
 );
 
-const CommunityGallerySection = ({ prompts, isLoading }: { prompts: SavedPrompt[], isLoading: boolean }) => (
+const CommunityGallerySection = ({ prompts, isLoading, onNavigate }: { prompts: SavedPrompt[], isLoading: boolean, onNavigate: (page: Page) => void; }) => (
   <section id="gallery">
     <SectionTitle>Community Gallery</SectionTitle>
     <p className="text-center text-slate-400 max-w-2xl mx-auto -mt-12 mb-12">
@@ -189,9 +233,19 @@ const CommunityGallerySection = ({ prompts, isLoading }: { prompts: SavedPrompt[
     {isLoading ? (
       <GallerySkeleton />
     ) : prompts.length > 0 ? (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {prompts.map(p => <GalleryPromptCard key={p.id} prompt={p} />)}
-      </div>
+      <>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {prompts.map(p => <GalleryPromptCard key={p.id} prompt={p} />)}
+        </div>
+        <div className="mt-12 text-center">
+            <button
+              onClick={() => onNavigate('gallery')}
+              className="px-6 py-3 bg-gray-800/50 border border-green-400/20 text-green-300 font-bold rounded-sm hover:bg-gray-700/50 hover:border-green-400/40 transition-all duration-300 text-base"
+            >
+              [ View Full Gallery ]
+            </button>
+        </div>
+      </>
     ) : (
       <div className="text-center text-slate-500 border-2 border-dashed border-slate-800 rounded-sm p-12">
         <RssIcon className="mx-auto h-12 w-12 text-slate-600" />
@@ -202,31 +256,45 @@ const CommunityGallerySection = ({ prompts, isLoading }: { prompts: SavedPrompt[
   </section>
 );
 
+type Page = 'generator' | 'about' | 'contact' | 'terms' | 'privacy' | 'auth' | 'dashboard' | 'gallery';
 
 const App: React.FC = () => {
   const [generationResult, setGenerationResult] = useState<{ prompt: string; options: GeneratorOptions } | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [activePage, setActivePage] = useState<'generator' | 'about' | 'contact' | 'terms' | 'privacy'>('generator');
+  const [activePage, setActivePage] = useState<Page>('generator');
   const [galleryPrompts, setGalleryPrompts] = useState<SavedPrompt[]>([]);
   const [isLoadingGallery, setIsLoadingGallery] = useState<boolean>(true);
   const generatorRef = useRef<HTMLElement>(null);
+  const { user } = useAuth();
   
-  // Fix: Use process.env.API_KEY as per guidelines. This also resolves issues with vite/client types.
   const missingEnvKeys = [
-    !process.env.API_KEY && 'API_KEY'
+    !process.env.API_KEY && 'API_KEY',
+    !import.meta.env.VITE_SUPABASE_URL && 'VITE_SUPABASE_URL',
+    !import.meta.env.VITE_SUPABASE_ANON_KEY && 'VITE_SUPABASE_ANON_KEY',
   ].filter(Boolean) as string[];
 
-  useEffect(() => {
-    if (missingEnvKeys.length === 0) {
-      getRecentPrompts().then(prompts => {
-        setGalleryPrompts(prompts);
-        setIsLoadingGallery(false);
-      }).catch(() => setIsLoadingGallery(false));
-    } else {
+  const fetchRecentPrompts = useCallback(() => {
+    setIsLoadingGallery(true);
+    getRecentPrompts().then(prompts => {
+      setGalleryPrompts(prompts);
       setIsLoadingGallery(false);
-    }
+    }).catch(() => setIsLoadingGallery(false));
   }, []);
+
+  useEffect(() => {
+    // Fetch recent prompts only for the generator page
+    if (activePage === 'generator') {
+      fetchRecentPrompts();
+    }
+  }, [activePage, fetchRecentPrompts]);
+  
+  // Navigate away from auth page if user logs in
+  useEffect(() => {
+    if (user && activePage === 'auth') {
+      setActivePage('dashboard');
+    }
+  }, [user, activePage]);
 
   const handleGenerate = useCallback(async (options: GeneratorOptions) => {
     setIsLoading(true);
@@ -244,13 +312,21 @@ const App: React.FC = () => {
   }, []);
 
   const handleShareToGallery = async (prompt: string, options: GeneratorOptions) => {
-    await addPrompt(prompt, options);
-    // Refresh gallery to show the new prompt instantly
-    const newPrompts = await getRecentPrompts();
-    setGalleryPrompts(newPrompts);
+    if (!user) {
+        throw new Error("You must be logged in to share a prompt.");
+    }
+    await addPrompt(prompt, options, user.id);
+    // Refresh recent prompts if on generator page
+    if (activePage === 'generator') {
+      fetchRecentPrompts();
+    }
   };
   
-  const navigate = (page: 'generator' | 'about' | 'contact' | 'terms' | 'privacy') => {
+  const navigate = (page: Page) => {
+    if (page === 'dashboard' && !user) {
+      setActivePage('auth');
+      return;
+    }
     setActivePage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -259,22 +335,38 @@ const App: React.FC = () => {
     if (activePage !== 'generator') {
       navigate('generator');
       setTimeout(() => {
-        generatorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const element = document.getElementById('generator');
+        element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 100);
     } else {
-      generatorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const element = document.getElementById('generator');
+      element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   };
 
   if (missingEnvKeys.length > 0) {
     return <ConfigurationError missingKeys={missingEnvKeys} />;
   }
-
-  return (
-    <div className="min-h-screen bg-gray-950 text-slate-300 font-mono flex flex-col">
-      <Header />
-      <main className="flex-grow container mx-auto px-4 py-16 md:py-24">
-        {activePage === 'generator' ? (
+  
+  const renderPage = () => {
+    switch (activePage) {
+      case 'about':
+        return <AboutPage onBack={() => navigate('generator')} />;
+      case 'contact':
+        return <ContactPage onBack={() => navigate('generator')} />;
+      case 'terms':
+        return <TermsPage onBack={() => navigate('generator')} />;
+      case 'privacy':
+        return <PrivacyPolicyPage onBack={() => navigate('generator')} />;
+      case 'auth':
+        return <AuthPage onBack={() => navigate('generator')} />;
+      case 'dashboard':
+        return <DashboardPage onBack={() => navigate('generator')} />;
+      case 'gallery':
+        return <GalleryPage onBack={() => navigate('generator')} />;
+      case 'generator':
+      default:
+        return (
           <div className="space-y-24 md:space-y-32">
             {/* Hero Section */}
             <section className="text-center pt-8 md:pt-16">
@@ -323,8 +415,10 @@ const App: React.FC = () => {
             </section>
 
             <UseCasesSection />
+
+            <WhereToUseSection />
             
-            <CommunityGallerySection prompts={galleryPrompts} isLoading={isLoadingGallery} />
+            <CommunityGallerySection prompts={galleryPrompts} isLoading={isLoadingGallery} onNavigate={navigate} />
 
             <AdBanner />
 
@@ -342,14 +436,15 @@ const App: React.FC = () => {
               </div>
             </section>
           </div>
-        ) : (
-          <>
-            {activePage === 'about' && <AboutPage onBack={() => navigate('generator')} />}
-            {activePage === 'contact' && <ContactPage onBack={() => navigate('generator')} />}
-            {activePage === 'terms' && <TermsPage onBack={() => navigate('generator')} />}
-            {activePage === 'privacy' && <PrivacyPolicyPage onBack={() => navigate('generator')} />}
-          </>
-        )}
+        );
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-950 text-slate-300 font-mono flex flex-col">
+      <Header onNavigate={navigate} />
+      <main className="flex-grow container mx-auto px-4 py-16 md:py-24">
+        {renderPage()}
       </main>
       <Footer onNavigate={navigate} />
       <CookieConsent />
