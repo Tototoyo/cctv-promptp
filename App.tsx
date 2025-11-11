@@ -185,7 +185,7 @@ const ConfigurationError = ({ missingKeys }: { missingKeys: string[] }) => (
               3. Add the missing keys listed above with their corresponding values.
             </p>
             <ul className="mt-2 text-slate-400 text-xs space-y-1 pl-4">
-                <li><code className="text-slate-300">VITE_API_KEY</code>: Your Google Gemini API Key.</li>
+                <li><code className="text-slate-300">VITE_API_KEY</code>: Your OpenAI API Key.</li>
                 <li><code className="text-slate-300">VITE_SUPABASE_URL</code>: Your Supabase project URL.</li>
                 <li><code className="text-slate-300">VITE_SUPABASE_ANON_KEY</code>: Your Supabase project anon key.</li>
             </ul>
