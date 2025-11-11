@@ -9,7 +9,7 @@ declare global {
   }
 }
 
-import OpenAI from 'openai';
+import OpenAI from 'https://esm.sh/openai@4.52.7';
 import type { GeneratorOptions } from '../types';
 import { SYSTEM_INSTRUCTION } from '../constants';
 
