@@ -385,73 +385,47 @@ const App: React.FC = () => {
                 Build scenes with accurate timestamps, camera artifacts, and surveillance realism — in seconds.
               </p>
               <div className="mt-10">
+                {/* Fix: Complete the App component which was truncated and add the default export. */}
                 <button
                   onClick={scrollToGenerator}
-                  className="px-8 py-4 bg-green-500 text-gray-950 font-bold rounded-sm hover:bg-green-400 transition-all duration-300 text-lg shadow-[0_0_15px_rgba(74,222,128,0.4)] hover:shadow-[0_0_25px_rgba(74,222,128,0.6)]">
-                  [ Try the Generator ]
+                  className="px-8 py-4 bg-green-500 text-gray-950 font-bold rounded-sm hover:bg-green-400 transition-all duration-300 text-lg shadow-[0_0_20px_rgba(74,222,128,0.4)]"
+                >
+                  <Wand2Icon className="inline-block w-6 h-6 mr-2 -mt-1" />
+                  Start Generating
                 </button>
               </div>
             </section>
-
+            
             <FeaturesSection />
 
+            {/* Generator Section */}
+            <section id="generator" ref={generatorRef} className="scroll-mt-24">
+              <SectionTitle>CCTV Prompt Generator</SectionTitle>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
+                <PromptGenerator onGenerate={handleGenerate} isLoading={isLoading} />
+                <PromptDisplay
+                  generationResult={generationResult}
+                  isLoading={isLoading}
+                  error={error}
+                  onShare={handleShareToGallery}
+                />
+              </div>
+            </section>
+            
             <HowItWorksSection />
-            
-            <section id="generator" ref={generatorRef}>
-               <SectionTitle>Live Generator</SectionTitle>
-              <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-                <div className="bg-gray-900/50 border border-green-400/10 p-6 rounded-sm">
-                  <h3 className="text-2xl font-bold text-green-400 mb-4 flex items-center gap-3">
-                    <Wand2Icon className="w-8 h-8"/>
-                    1. Configure Scene
-                  </h3>
-                  <PromptGenerator onGenerate={handleGenerate} isLoading={isLoading} />
-                </div>
-                <div className="bg-gray-900/50 border border-green-400/10 p-6 rounded-sm">
-                   <h3 className="text-2xl font-bold text-slate-300 mb-4 flex items-center gap-3">
-                    <TerminalIcon className="w-8 h-8"/>
-                    2. Get AI-Generated Output
-                  </h3>
-                  <PromptDisplay 
-                    generationResult={generationResult} 
-                    isLoading={isLoading} 
-                    error={error} 
-                    onShare={handleShareToGallery}
-                  />
-                </div>
-              </div>
-            </section>
-
             <UseCasesSection />
-
             <WhereToUseSection />
-            
             <CommunityGallerySection prompts={galleryPrompts} isLoading={isLoadingGallery} onNavigate={navigate} />
-
             <AdBanner />
-
-            {/* CTA Section */}
-            <section className="text-center">
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-100">
-                Start Generating Prompts Now.
-              </h2>
-              <div className="mt-8">
-                <button
-                  onClick={scrollToGenerator}
-                  className="px-8 py-4 bg-green-500 text-gray-950 font-bold rounded-sm hover:bg-green-400 transition-all duration-300 text-lg shadow-[0_0_15px_rgba(74,222,128,0.4)] hover:shadow-[0_0_25px_rgba(74,222,128,0.6)]">
-                  [ Try the Generator ]
-                </button>
-              </div>
-            </section>
           </div>
         );
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 text-slate-300 font-mono flex flex-col">
+    <div className="min-h-screen bg-gray-950 text-slate-300 font-sans selection:bg-green-500/30">
       <Header onNavigate={navigate} />
-      <main className="flex-grow container mx-auto px-4 py-16 md:py-24">
+      <main className="container mx-auto px-4 py-12 md:py-20">
         {renderPage()}
       </main>
       <Footer onNavigate={navigate} />
