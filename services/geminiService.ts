@@ -1,3 +1,14 @@
+// Fix: Manually declare Vite's `import.meta.env` to resolve TypeScript errors.
+declare global {
+  interface ImportMeta {
+    readonly env: {
+      readonly VITE_API_KEY: string;
+      readonly VITE_SUPABASE_URL: string;
+      readonly VITE_SUPABASE_ANON_KEY: string;
+    }
+  }
+}
+
 import { GoogleGenAI } from '@google/genai';
 import type { GeneratorOptions } from '../types';
 import { SYSTEM_INSTRUCTION } from '../constants';
@@ -9,15 +20,15 @@ let ai: GoogleGenAI | null = null;
  * Lazily initializes and returns the GoogleGenAI client instance.
  * This prevents the "API Key must be set" error on app load if the key is missing.
  */
-// Fix: Use process.env.API_KEY as per guidelines. This also resolves issues with vite/client types.
+// Fix: Use import.meta.env.VITE_API_KEY to align with Vite's client-side environment variable conventions.
 const getAiClient = (): GoogleGenAI => {
   if (!ai) {
-    if (!process.env.API_KEY) {
+    if (!import.meta.env.VITE_API_KEY) {
       // This should not be reached if the App component's check is working,
       // but it's a safeguard.
-      throw new Error('API_KEY is not configured in environment variables.');
+      throw new Error('VITE_API_KEY is not configured in environment variables.');
     }
-    ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY });
   }
   return ai;
 };
